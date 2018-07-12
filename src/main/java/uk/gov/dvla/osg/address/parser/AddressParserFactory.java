@@ -14,10 +14,21 @@ import com.google.gson.JsonSyntaxException;
 import uk.gov.dvla.osg.address.config.ParserConfig;
 import uk.gov.dvla.osg.address.model.FileType;
 
-public class ParserFactory {
+/**
+ * A factory for creating AddressParser objects.
+ */
+public class AddressParserFactory {
 
     private static final Logger LOGGER = LogManager.getLogger();
     
+    /**
+     * Gets the address parser.
+     *
+     * @param configFile the application configuration file
+     * @param type the type of file/application to be parsed
+     * @param inputfile the inputfile containing the addresses
+     * @return the parser
+     */
     public static AddressParser getParser(String configFile, FileType type, String inputfile) {
         
         try (Reader reader = new FileReader(configFile)) {

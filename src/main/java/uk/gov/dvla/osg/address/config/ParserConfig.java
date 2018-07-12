@@ -17,21 +17,31 @@ public class ParserConfig {
     private TsvConfig tsv;
     @SerializedName("other")
     private Map<FileType, DelimitedConfig> other = new HashMap<>();
-    
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
-    public ParserConfig() {}
 
+    /**
+     * Gets the dpf parser configuration.
+     *
+     * @return the dpf
+     */
     public DpfConfig getDpf() {
         return dpf;
     }
     
+    /**
+     * Gets the tsv parser configuration.
+     *
+     * @return the tsv
+     */
     public TsvConfig getTsv() {
         return tsv;
     }
 
+    /**
+     * Gets the configuration for a specific application type e.g. V11.
+     *
+     * @param type the type
+     * @return the app config
+     */
     public DelimitedConfig getAppConfig(FileType type) {
         return other.get(type);
     }

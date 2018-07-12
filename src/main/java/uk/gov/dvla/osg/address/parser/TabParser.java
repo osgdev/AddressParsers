@@ -16,6 +16,7 @@ import com.univocity.parsers.tsv.*;
 import uk.gov.dvla.osg.address.config.ParserConfig;
 import uk.gov.dvla.osg.address.config.TsvConfig;
 import uk.gov.dvla.osg.address.model.Address;
+import uk.gov.dvla.osg.address.model.Address.AddressBuilder;
 import uk.gov.dvla.osg.address.model.FileType;
 
 public class TabParser extends AddressParser {
@@ -35,13 +36,14 @@ public class TabParser extends AddressParser {
         TsvParser parser = createParser();
         parser.parseAllRecords(new File(inputFile)).forEach(record -> {
             config = pc.getTsv();
-            Address address = new Address(
-                    record.getString(config.getAddress1()), 
-                    record.getString(config.getAddress2()), 
-                    record.getString(config.getAddress3()), 
-                    record.getString(config.getAddress4()), 
-                    record.getString(config.getAddress5()), 
-                    record.getString(config.getPostcode()));
+            Address address = AddressBuilder.getInstance()
+                    .address1(record.getString(config.getAddress1()))
+                    .address2(record.getString(config.getAddress2()))
+                    .address3(record.getString(config.getAddress3()))
+                    .address4(record.getString(config.getAddress4()))
+                    .address5(record.getString(config.getAddress5()))
+                    .postcode(record.getString(config.getPostcode()))
+                    .build();
 
             addresses.add(address);
         });
