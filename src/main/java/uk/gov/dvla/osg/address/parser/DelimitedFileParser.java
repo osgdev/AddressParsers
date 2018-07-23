@@ -3,6 +3,8 @@ package uk.gov.dvla.osg.address.parser;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
@@ -19,12 +21,12 @@ import uk.gov.dvla.osg.address.model.Address;
 import uk.gov.dvla.osg.address.model.Address.AddressBuilder;
 import uk.gov.dvla.osg.address.model.FileType;
 
-public class DelimitedFileParser extends AddressParser {
+public class DelimitedFileParser implements IAddressParser {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    DelimitedConfig config;
-
+    private final  String inputFile;
+    private final List<Address> addresses = new ArrayList<>();
+    private final DelimitedConfig config;
     private String[] headers;
 
     /**
@@ -35,12 +37,12 @@ public class DelimitedFileParser extends AddressParser {
      * @param type the type
      */
     public DelimitedFileParser(ParserConfig pc, String inputFile, FileType type) {
-        super(pc, inputFile, type);
+        this.inputFile = inputFile;
+        this.config = pc.getAppConfig(type);
+        load();
     }
 
-    @Override
-    public void load() {
-        this.config = pc.getAppConfig(type);
+    private void load() {
         CsvParser parser = createParser();
         parser.parseAllRecords(new File(inputFile)).forEach(record -> {
             //Ignore row if first field matches the Footer Marker
@@ -65,7 +67,6 @@ public class DelimitedFileParser extends AddressParser {
         }
     }
 
-    @Override
     public void save() {
         // copy the input file
         File srcFile = new File(inputFile);
@@ -127,5 +128,9 @@ public class DelimitedFileParser extends AddressParser {
         parserSettings.setProcessor(new ConcurrentRowProcessor(new RowListProcessor()));
         parserSettings.setLineSeparatorDetectionEnabled(true);
         return new CsvParser(parserSettings);
+    }
+    
+    public List<Address> getAddresses() {
+        return this.addresses;
     }
 }

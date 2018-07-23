@@ -29,7 +29,7 @@ public class AddressParserFactory {
      * @param inputfile the inputfile containing the addresses
      * @return the parser
      */
-    public static AddressParser getParser(String configFile, FileType type, String inputfile) {
+    public static IAddressParser getParser(String configFile, FileType type, String inputfile) {
         
         try (Reader reader = new FileReader(configFile)) {
             ParserConfig config = new Gson().fromJson(reader, ParserConfig.class);

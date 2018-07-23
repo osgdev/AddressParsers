@@ -3,6 +3,8 @@ package uk.gov.dvla.osg.address.parser;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
@@ -17,34 +19,33 @@ import uk.gov.dvla.osg.address.config.ParserConfig;
 import uk.gov.dvla.osg.address.config.TsvConfig;
 import uk.gov.dvla.osg.address.model.Address;
 import uk.gov.dvla.osg.address.model.Address.AddressBuilder;
-import uk.gov.dvla.osg.address.model.FileType;
 
-public class TabParser extends AddressParser {
+public class TabParser implements IAddressParser {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    TsvConfig config;
+    private final String inputFile;
+    private final List<Address> addresses = new ArrayList<>();
+    private final TsvConfig config;
 
     public TabParser(ParserConfig pc, String inputFile) {
-        super(pc, inputFile, FileType.TSV);
-        
+        this.inputFile = inputFile;
+        config = pc.getTsv();
+        load();
     }
 
-    @Override
-    public void load() {
-        config = pc.getTsv();
+    private void load() {
         TsvParser parser = createParser();
         parser.parseAllRecords(new File(inputFile)).forEach(record -> {
-            config = pc.getTsv();
             Address address = AddressBuilder.getInstance()
-                    .address1(record.getString(config.getAddress1()))
-                    .address2(record.getString(config.getAddress2()))
-                    .address3(record.getString(config.getAddress3()))
-                    .address4(record.getString(config.getAddress4()))
-                    .address5(record.getString(config.getAddress5()))
-                    .postcode(record.getString(config.getPostcode()))
-                    .build();
-
+                                .address1(record.getString(config.getAddress1()))
+                                .address2(record.getString(config.getAddress2()))
+                                .address3(record.getString(config.getAddress3()))
+                                .address4(record.getString(config.getAddress4()))
+                                .address5(record.getString(config.getAddress5()))
+                                .postcode(record.getString(config.getPostcode()))
+                                .build();
+            
             addresses.add(address);
         });
     }
@@ -63,18 +64,17 @@ public class TabParser extends AddressParser {
         return new TsvParser(parserSettings);
     }
 
-    @Override
     public void save() {
         // copy the input file
         File srcFile = new File(inputFile);
-        File tempFile = new File(inputFile+".bak");
+        File tempFile = new File(inputFile + ".bak");
         try {
             FileUtils.copyFile(srcFile, tempFile);
         } catch (IOException ex1) {
             LOGGER.debug("Error copying input file. Unable to save data.");
             System.exit(1);
         }
-        
+
         try (FileWriter fw = new FileWriter(srcFile)) {
             // Create an instance of TsvWriter with the default settings
             TsvWriter writer = new TsvWriter(fw, new TsvWriterSettings());
@@ -93,7 +93,7 @@ public class TabParser extends AddressParser {
                 writer.addValue(config.getAddress5(), this.addresses.get(counter.get()).getAddress5());
                 writer.addValue(config.getPostcode(), this.addresses.get(counter.getAndIncrement()).getPostcode());
                 writer.writeValuesToRow();
-            }); 
+            });
             // Flushes and closes the writer
             writer.close();
             FileUtils.deleteQuietly(tempFile);
@@ -101,5 +101,10 @@ public class TabParser extends AddressParser {
             LOGGER.fatal("Unable to write to {} : {}", inputFile, ex.getMessage());
             System.exit(1);
         }
+    }
+
+    @Override
+    public List<Address> getAddresses() {
+        return this.addresses;
     }
 }

@@ -3,6 +3,8 @@ package uk.gov.dvla.osg.address.parser;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
@@ -17,22 +19,24 @@ import uk.gov.dvla.osg.address.config.DpfConfig;
 import uk.gov.dvla.osg.address.config.ParserConfig;
 import uk.gov.dvla.osg.address.model.Address;
 import uk.gov.dvla.osg.address.model.Address.AddressBuilder;
-import uk.gov.dvla.osg.address.model.FileType;
 
-public class DpfParser extends AddressParser {
+public class DpfParser implements IAddressParser {
     
     private static final Logger LOGGER = LogManager.getLogger();
     
+    private final String inputFile;
+    private final List<Address> addresses = new ArrayList<>();
+    private final DpfConfig config;
     private String[] headers;
-    DpfConfig config;
     
     public DpfParser(ParserConfig pc, String inputFile) {
-        super(pc, inputFile, FileType.DPF);
+        this.inputFile = inputFile;
+        config = pc.getDpf();
+        load();
     }
 
-    @Override
-    public void load() {
-        config = pc.getDpf();
+    private void load() {
+        
         TsvParser parser = createParser();
         parser.parseAllRecords(new File(inputFile)).forEach(record -> {
             Address address = AddressBuilder.getInstance()
@@ -103,5 +107,10 @@ public class DpfParser extends AddressParser {
             System.exit(1);
         }
         
+    }
+
+    @Override
+    public List<Address> getAddresses() {
+        return this.addresses;
     }
 }
