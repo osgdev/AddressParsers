@@ -114,25 +114,6 @@ public class Address {
             return new Address(this);
         }
     }
-    
-    /**
-     * Instantiates a new address.
-     *
-     * @param address1 the address 1
-     * @param address2 the address 2
-     * @param address3 the address 3
-     * @param address4 the address 4
-     * @param address5 the address 5
-     * @param postcode the postcode
-     */
-    public Address(String address1, String address2, String address3, String address4, String address5, String postcode) {
-        this.address1 = address1;
-        this.address2 = address2;
-        this.address3 = address3;
-        this.address4 = address4;
-        this.address5 = address5;
-        this.postcode = postcode;
-    }
 
     /**
      * Instantiates a new address from the address builder.

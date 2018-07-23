@@ -47,7 +47,6 @@ public class AddressParserFactory {
             LOGGER.fatal("Unable to read from configFile {}", configFile);
         } catch (JsonSyntaxException ex) {
             LOGGER.fatal("Config file [{}] is not valid JSON", configFile);
-            ex.printStackTrace();
         }
         System.exit(1);
         return null;          
