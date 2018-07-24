@@ -81,7 +81,6 @@ public class PostcodeFormatter {
      * @return True if a valid UK postcode.
      */
     public static boolean validate(String postcode) {
-        pattern = Pattern.compile(REGEX);
         String temp = postcode.replace("*", "");
         temp = StringUtils.deleteWhitespace(temp).toUpperCase();
         return StringUtils.equalsAnyIgnoreCase(temp, IGNORELIST) || pattern.matcher(temp).matches();
