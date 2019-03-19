@@ -18,7 +18,7 @@ public class InputArgs {
         // validate args length
         if (cmdArgs.length != EXPECTED_NUMBER_OF_ARGS) {
             LOGGER.fatal("Incorrect number of arguments supplied.");
-            LOGGER.fatal("Usage: progName.jar configFile, fileType, inputFile");
+            LOGGER.fatal("Usage: progName.jar configFile, fileType, inputFile, outputFile");
             System.exit(1);
         }
         // Extract args
@@ -44,7 +44,7 @@ public class InputArgs {
             System.exit(1);
         }
         
-        outputFile = cmdArgs[2];
+        outputFile = cmdArgs[3];
     }
 
     /**
