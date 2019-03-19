@@ -12,7 +12,7 @@ public interface IAddressParser {
     /**
      * Saves the addresses in the address list back to the provided input file.
      */
-    public void save();
+    public void save(String outputFile);
 
     /**
      * Gets the list of addresses.

@@ -30,17 +30,10 @@ public class AddressParserFactory {
      * @return the parser
      */
     public static IAddressParser getParser(String configFile, FileType type, String inputfile) {
+        ParserConfig config = null;
         
         try (Reader reader = new FileReader(configFile)) {
-            ParserConfig config = new Gson().fromJson(reader, ParserConfig.class);
-            switch (type) {
-            case DPF:
-                return new DpfParser(config, inputfile);
-            case TSV:
-                return new TabParser(config, inputfile);
-            default:
-                return new DelimitedFileParser(config, inputfile, type);
-            }
+            config = new Gson().fromJson(reader, ParserConfig.class);
         } catch (IOException ex) {
             LOGGER.fatal("Unable to load configFile {}", configFile);
         } catch (JsonIOException ex) {
@@ -48,7 +41,14 @@ public class AddressParserFactory {
         } catch (JsonSyntaxException ex) {
             LOGGER.fatal("Config file [{}] is not valid JSON", configFile);
         }
-        System.exit(1);
-        return null;          
+        
+        switch (type) {
+        case DPF:
+            return new DpfParser(config, inputfile);
+        case TSV:
+            return new TabParser(config, inputfile);
+        default:
+            return new DelimitedFileParser(config, inputfile, type);
+        }
     }
 }

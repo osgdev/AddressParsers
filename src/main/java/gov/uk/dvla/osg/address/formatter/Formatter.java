@@ -1,5 +1,8 @@
 package gov.uk.dvla.osg.address.formatter;
 
+import static gov.uk.dvla.osg.address.formatter.AddressFormatter.*;
+import static gov.uk.dvla.osg.address.formatter.PostcodeFormatter.*;
+
 import java.util.List;
 
 import uk.gov.dvla.osg.address.model.Address;
@@ -21,25 +24,25 @@ public class Formatter {
      * @param address the address to process
      */
     public static void formatSingle(Address address) {
-        address.setAddress1(AddressFormatter.formatLine(address.getAddress1()));
-        address.setAddress2(AddressFormatter.formatLine(address.getAddress2()));
-        address.setAddress3(AddressFormatter.formatLine(address.getAddress3()));
-        address.setAddress4(AddressFormatter.formatLine(address.getAddress4()));
-        address.setAddress5(AddressFormatter.formatLine(address.getAddress5()));
+        address.setAddress1(formatLine(address.getAddress1()));
+        address.setAddress2(formatLine(address.getAddress2()));
+        address.setAddress3(formatLine(address.getAddress3()));
+        address.setAddress4(formatLine(address.getAddress4()));
+        address.setAddress5(formatLine(address.getAddress5()));
        /* Postcodes might not always be in the postcode field, for some file types, so we 
         * loop through each field to see if it contains a valid postcode. */
-        if (PostcodeFormatter.validate(address.getPostcode())) {
-            address.setPostcode(PostcodeFormatter.Format(address.getPostcode()));
-        } else if (PostcodeFormatter.validate(address.getAddress5())) {
-            address.setAddress5(PostcodeFormatter.Format(address.getAddress5()));
-        } else if (PostcodeFormatter.validate(address.getAddress4())) {
-            address.setAddress4(PostcodeFormatter.Format(address.getAddress4()));
-        } else if (PostcodeFormatter.validate(address.getAddress3())) {
-            address.setAddress3(PostcodeFormatter.Format(address.getAddress3()));
-        } else if (PostcodeFormatter.validate(address.getAddress2())) {
-            address.setAddress2(PostcodeFormatter.Format(address.getAddress2()));
-        } else if (PostcodeFormatter.validate(address.getAddress1())) {
-            address.setAddress1(PostcodeFormatter.Format(address.getAddress1()));
+        if (validatePC(address.getPostcode())) {
+            address.setPostcode(formatPC(address.getPostcode()));
+        } else if (validatePC(address.getAddress5())) {
+            address.setAddress5(formatPC(address.getAddress5()));
+        } else if (validatePC(address.getAddress4())) {
+            address.setAddress4(formatPC(address.getAddress4()));
+        } else if (validatePC(address.getAddress3())) {
+            address.setAddress3(formatPC(address.getAddress3()));
+        } else if (validatePC(address.getAddress2())) {
+            address.setAddress2(formatPC(address.getAddress2()));
+        } else if (validatePC(address.getAddress1())) {
+            address.setAddress1(formatPC(address.getAddress1()));
         }
     }
 }

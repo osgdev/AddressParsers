@@ -1,5 +1,6 @@
 package uk.gov.dvla.osg.address.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -45,7 +46,10 @@ public class Address {
          * @param newAddress1 the new address line 1
          * @return the address builder
          */
-        public AddressBuilder address1(String newAddress1) {
+        public AddressBuilder address1(String newAddress1) throws IllegalArgumentException {
+            if (StringUtils.isAllBlank(newAddress1)) {
+                throw new IllegalArgumentException("Address line 1 must not be blank");
+            }
             this.nestedAddress1 = newAddress1;
             return this;
         }
@@ -227,6 +231,7 @@ public class Address {
      * Sets the postcode.
      *
      * @param postcode the new postcode
+     * @throws Exception 
      */
     public void setPostcode(String postcode) {
         this.postcode = postcode;

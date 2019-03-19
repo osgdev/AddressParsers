@@ -29,7 +29,7 @@ public class PostcodeFormatter {
      * @param postcode The unformatted postcode.
      * @return Postode formatted with spaces.
      */
-    public static String Format(String postcode) {
+    public static String formatPC(String postcode) {
         
         String str = StringUtils.deleteWhitespace(postcode).toUpperCase();
         // Remove all * from the string
@@ -80,7 +80,7 @@ public class PostcodeFormatter {
      * @param postcode The postcode to validate.
      * @return True if a valid UK postcode.
      */
-    public static boolean validate(String postcode) {
+    public static boolean validatePC(String postcode) {
         String temp = postcode.replace("*", "");
         temp = StringUtils.deleteWhitespace(temp).toUpperCase();
         return StringUtils.equalsAnyIgnoreCase(temp, IGNORELIST) || pattern.matcher(temp).matches();

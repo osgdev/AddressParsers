@@ -8,10 +8,11 @@ import org.apache.logging.log4j.Logger;
 public class InputArgs {
     
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final int EXPECTED_NUMBER_OF_ARGS = 3;
+    private static final int EXPECTED_NUMBER_OF_ARGS = 4;
     private final String configfile;
     private FileType type;
     private final String inputfile;
+    private String outputFile;
     
     public InputArgs(String[] cmdArgs) {
         // validate args length
@@ -42,6 +43,8 @@ public class InputArgs {
             LOGGER.fatal("Input File '{}' doesn't exist on the filepath.", inputfile);
             System.exit(1);
         }
+        
+        outputFile = cmdArgs[2];
     }
 
     /**
@@ -63,11 +66,20 @@ public class InputArgs {
     }
 
     /**
-     * Gets the input filepath.
+     * Gets the input filepath to read records from.
      *
      * @return the input filepath
      */
     public String getInputfile() {
         return inputfile;
+    }
+    
+    /**
+     * Gets the outputfile to be written to.
+     *
+     * @return the outputfile
+     */
+    public String getOutputfile() {
+        return outputFile;
     }
 }

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,18 +66,13 @@ public class DpfParser implements IAddressParser {
     }
 
     @Override
-    public void save() {
+    public void save(String outputFilePath) {
         // copy the input file
         File srcFile = new File(inputFile);
-        File tempFile = new File(inputFile+".bak");
-        try {
-            FileUtils.copyFile(srcFile, tempFile);
-        } catch (IOException ex1) {
-            LOGGER.debug("Error copying input file. Unable to save data.");
-            System.exit(1);
-        }
+        File outputFile = new File(outputFilePath);
+
         
-        try (FileWriter fw = new FileWriter(srcFile)) {
+        try (FileWriter fw = new FileWriter(outputFile)) {
             // Create an instance of TsvWriter with the default settings
             TsvWriter writer = new TsvWriter(fw, new TsvWriterSettings());
             // Writes the file headers
@@ -87,7 +81,7 @@ public class DpfParser implements IAddressParser {
             AtomicInteger counter = new AtomicInteger(0);
             // Build a parser that loops through the original dpf file
             TsvParser parser = createParser();
-            parser.parseAll(tempFile).forEach(record -> {
+            parser.parseAll(srcFile).forEach(record -> {
                 // Write out the original row of data
                 writer.addValues((Object[]) record);
                 // Replace changed values
@@ -101,7 +95,6 @@ public class DpfParser implements IAddressParser {
             }); 
             // Flushes and closes the writer
             writer.close();
-            FileUtils.deleteQuietly(tempFile);
         } catch (IOException ex) {
             LOGGER.fatal("Unable to write to {} : {}", inputFile, ex.getMessage());
             System.exit(1);
