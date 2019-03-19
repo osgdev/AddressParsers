@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.univocity.parsers.common.processor.ConcurrentRowProcessor;
 import com.univocity.parsers.common.processor.RowListProcessor;
+import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.tsv.*;
 
 import uk.gov.dvla.osg.address.config.DpfConfig;
@@ -30,14 +31,19 @@ public class DpfParser implements IAddressParser {
     
     public DpfParser(ParserConfig pc, String inputFile) {
         this.inputFile = inputFile;
-        config = pc.getDpf();
+        this.config = pc.getDpf();
         load();
     }
 
     private void load() {
-        
+        // Create an instance of the TsvParser
         TsvParser parser = createParser();
-        parser.parseAllRecords(new File(inputFile)).forEach(record -> {
+        // Extract all records from the input file
+        List<Record> allRecords = parser.parseAllRecords(new File(inputFile));
+        // Extract the header row from the input file
+        headers = parser.getRecordMetadata().headers();
+        // Extract the address from each record
+        for (Record record : allRecords) {
             Address address = AddressBuilder.getInstance()
                     .address1(record.getString(config.getAddress1()))
                     .address2(record.getString(config.getAddress2()))
@@ -47,9 +53,9 @@ public class DpfParser implements IAddressParser {
                     .postcode(record.getString(config.getPostcode()))
                     .build();
 
-            addresses.add(address);
-        });
-        headers = parser.getRecordMetadata().headers();
+            addresses.add(address); 
+        }
+
     }
 
     /**
@@ -81,7 +87,9 @@ public class DpfParser implements IAddressParser {
             AtomicInteger counter = new AtomicInteger(0);
             // Build a parser that loops through the original dpf file
             TsvParser parser = createParser();
-            parser.parseAll(srcFile).forEach(record -> {
+            List<String[]> allRecords = parser.parseAll(srcFile);
+            
+            for (String[] record : allRecords) {
                 // Write out the original row of data
                 writer.addValues((Object[]) record);
                 // Replace changed values
@@ -92,7 +100,8 @@ public class DpfParser implements IAddressParser {
                 writer.addValue(config.getAddress5(), this.addresses.get(counter.get()).getAddress5());
                 writer.addValue(config.getPostcode(), this.addresses.get(counter.getAndIncrement()).getPostcode());
                 writer.writeValuesToRow();
-            }); 
+            }
+            
             // Flushes and closes the writer
             writer.close();
         } catch (IOException ex) {

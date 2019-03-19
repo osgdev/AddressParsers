@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.univocity.parsers.common.processor.ConcurrentRowProcessor;
 import com.univocity.parsers.common.processor.RowListProcessor;
+import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.csv.*;
 
 import uk.gov.dvla.osg.address.config.DelimitedConfig;
@@ -43,23 +44,25 @@ public class DelimitedFileParser implements IAddressParser {
 
     private void load() {
         CsvParser parser = createParser();
-        parser.parseAllRecords(new File(inputFile)).forEach(record -> {
+        List<Record> allRecords = parser.parseAllRecords(new File(inputFile));
+        
+        for (Record record : allRecords) {
             //Ignore row if first field matches the Footer Marker
-            if (!record.getString(0).equals(config.getFooterMarker())) {
-                
-               Address address = AddressBuilder.getInstance()
-                       .address1(record.getString(config.getAddress1()))
-                       .address2(record.getString(config.getAddress2()))
-                       .address3(record.getString(config.getAddress3()))
-                       .address4(record.getString(config.getAddress4()))
-                       .address5(record.getString(config.getAddress5()))
-                       .postcode(record.getString(config.getPostcode()))
-                       .build();
-
-                addresses.add(address);
+            if (record.getString(0).equals(config.getFooterMarker())) {
+                return;
             }
+                
+           Address address = AddressBuilder.getInstance()
+                   .address1(record.getString(config.getAddress1()))
+                   .address2(record.getString(config.getAddress2()))
+                   .address3(record.getString(config.getAddress3()))
+                   .address4(record.getString(config.getAddress4()))
+                   .address5(record.getString(config.getAddress5()))
+                   .postcode(record.getString(config.getPostcode()))
+                   .build();
 
-        });
+            addresses.add(address);
+        }
 
         if (config.hasHeader()) {
             headers = parser.getRecordMetadata().headers();
@@ -76,15 +79,20 @@ public class DelimitedFileParser implements IAddressParser {
             CsvWriterSettings writerSettings = new CsvWriterSettings();
             writerSettings.getFormat().setDelimiter(config.getDelimiter());
             CsvWriter writer = new CsvWriter(fw, writerSettings);
+           
             // Writes the file headers
             if (config.hasHeader()) {
                 writer.writeHeaders(headers);
             }
+            
             // Keep track of which row is being processed
             AtomicInteger counter = new AtomicInteger(0);
             // Build a parser that loops through the original dpf file
             CsvParser parser = createParser();
-            parser.parseAll(srcFile).forEach(record -> {
+            
+            List<String[]> allRecords = parser.parseAll(srcFile);
+            
+            for (String[] record : allRecords) {
                 // Write out the original row of data
                 writer.addValues((Object[]) record);
                 // Replace changed values
@@ -97,7 +105,8 @@ public class DelimitedFileParser implements IAddressParser {
                     writer.addValue(config.getPostcode(), this.addresses.get(counter.getAndIncrement()).getPostcode());
                 }
                 writer.writeValuesToRow();
-            });
+            }
+
             // Flushes and closes the writer
             writer.close();
         } catch (IOException ex) {

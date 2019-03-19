@@ -1,7 +1,5 @@
 package uk.gov.dvla.osg.address.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * The Class Address.
@@ -16,123 +14,19 @@ public class Address {
     private String postcode;
 
     /**
-     * Builder for an address object.
-     */
-    public static class AddressBuilder {
-        private String nestedAddress1;
-        private String nestedAddress2;
-        private String nestedAddress3;
-        private String nestedAddress4;
-        private String nestedAddress5;
-        private String nestedPostcode;
-        
-        /**
-         * Gets the single instance of AddressBuilder.
-         *
-         * @return single instance of AddressBuilder
-         */
-        public static AddressBuilder getInstance() {
-            return new AddressBuilder();
-        }
-        
-        /**
-         * Instantiates a new address builder.
-         */
-        private AddressBuilder () { }
-        
-        /**
-         * Address line 1.
-         *
-         * @param newAddress1 the new address line 1
-         * @return the address builder
-         */
-        public AddressBuilder address1(String newAddress1) throws IllegalArgumentException {
-            if (StringUtils.isAllBlank(newAddress1)) {
-                throw new IllegalArgumentException("Address line 1 must not be blank");
-            }
-            this.nestedAddress1 = newAddress1;
-            return this;
-        }
-        
-        /**
-         * Address line 2.
-         *
-         * @param newAddress2 the new address line 2
-         * @return the address builder
-         */
-        public AddressBuilder address2(String newAddress2) {
-            this.nestedAddress2 = newAddress2;
-            return this;
-        }
-        
-        /**
-         * Address line 3.
-         *
-         * @param newAddress3 the new address line 3
-         * @return the address builder
-         */
-        public AddressBuilder address3(String newAddress3) {
-            this.nestedAddress3 = newAddress3;
-            return this;
-        }
-        
-        /**
-         * Address line 4.
-         *
-         * @param newAddress4 the new address line 4
-         * @return the address builder
-         */
-        public AddressBuilder address4(String newAddress4) {
-            this.nestedAddress4 = newAddress4;
-            return this;
-        }
-        
-        /**
-         * Address line 5.
-         *
-         * @param newAddress5 the new address line 5
-         * @return the address builder
-         */
-        public AddressBuilder address5(String newAddress5) {
-            this.nestedAddress5 = newAddress5;
-            return this;
-        }
-        
-        /**
-         * Postcode.
-         *
-         * @param newPostcode the new postcode
-         * @return the address builder
-         */
-        public AddressBuilder postcode(String newPostcode) {
-            this.nestedPostcode = newPostcode;
-            return this;
-        }
-        
-        /**
-         * Builds the Address.
-         *
-         * @return the address
-         */
-        public Address build() {
-            return new Address(this);
-        }
-    }
-
-    /**
      * Instantiates a new address from the address builder.
      *
      * @param addressBuilder the address builder
      */
     private Address(AddressBuilder addressBuilder) {
-        this.address1 = addressBuilder.nestedAddress1;
-        this.address2 = addressBuilder.nestedAddress2;
-        this.address3 = addressBuilder.nestedAddress3;
-        this.address4 = addressBuilder.nestedAddress4;
-        this.address5 = addressBuilder.nestedAddress5;
-        this.postcode = addressBuilder.nestedPostcode;
+        this.address1 = addressBuilder.address1;
+        this.address2 = addressBuilder.address2;
+        this.address3 = addressBuilder.address3;
+        this.address4 = addressBuilder.address4;
+        this.address5 = addressBuilder.address5;
+        this.postcode = addressBuilder.postcode;
     }
-
+    
     /**
      * Gets the address line 1.
      *
@@ -236,9 +130,110 @@ public class Address {
     public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("address1", address1).append("address2", address2).append("address3", address3).append("address4", address4).append("address5", address5).append("postcode", postcode).toString();
+    
+    /**
+     * Builder for an address object.
+     */
+    @SuppressWarnings("hiding")
+    public static class AddressBuilder {
+        private String address1;
+        private String address2;
+        private String address3;
+        private String address4;
+        private String address5;
+        private String postcode;
+        
+        /**
+         * Gets the single instance of AddressBuilder.
+         *
+         * @return single instance of AddressBuilder
+         */
+        public static AddressBuilder getInstance() {
+            return new AddressBuilder();
+        }
+        
+        /**
+         * Instantiates a new address builder.
+         */
+        private AddressBuilder () { }
+        
+        /**
+         * Address line 1.
+         *
+         * @param newAddress1 the new address line 1
+         * @return the address builder
+         */
+        public AddressBuilder address1(String address1) {
+/*            if (StringUtils.isAllBlank(newAddress1)) {
+                throw new IllegalArgumentException("Address line 1 must not be blank");
+            }*/
+            this.address1 = address1;
+            return this;
+        }
+        
+        /**
+         * Address line 2.
+         *
+         * @param newAddress2 the new address line 2
+         * @return the address builder
+         */
+        public AddressBuilder address2(String address2) {
+            this.address2 = address2;
+            return this;
+        }
+        
+        /**
+         * Address line 3.
+         *
+         * @param newAddress3 the new address line 3
+         * @return the address builder
+         */
+        public AddressBuilder address3(String address3) {
+            this.address3 = address3;
+            return this;
+        }
+        
+        /**
+         * Address line 4.
+         *
+         * @param newAddress4 the new address line 4
+         * @return the address builder
+         */
+        public AddressBuilder address4(String address4) {
+            this.address4 = address4;
+            return this;
+        }
+        
+        /**
+         * Address line 5.
+         *
+         * @param newAddress5 the new address line 5
+         * @return the address builder
+         */
+        public AddressBuilder address5(String address5) {
+            this.address5 = address5;
+            return this;
+        }
+        
+        /**
+         * Postcode.
+         *
+         * @param newPostcode the new postcode
+         * @return the address builder
+         */
+        public AddressBuilder postcode(String postcode) {
+            this.postcode = postcode;
+            return this;
+        }
+        
+        /**
+         * Builds the Address.
+         *
+         * @return the address
+         */
+        public Address build() {
+            return new Address(this);
+        }
     }
+    
 }
